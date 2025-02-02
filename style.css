@@ -1,0 +1,265 @@
+/* General styles */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  display: flex;
+  height: 100vh;
+  background: #121212;
+  color: white;
+  transition: background 0.3s, color 0.3s;
+}
+
+/* Layout */
+.container {
+  display: flex;
+  width: 100%;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 250px;
+  background: #1e1e1e;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: transform 0.3s ease-in-out;
+}
+
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#close-sidebar {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.search-box {
+  width: 100%;
+  padding: 8px;
+  border-radius: 5px;
+  border: none;
+  background: #333;
+  color: white;
+}
+
+.folders,
+.chats {
+  margin-top: 20px;
+}
+
+.folders ul,
+.chats ul {
+  list-style: none;
+  padding: 0;
+}
+
+.folders li,
+.chats li {
+  padding: 8px;
+  margin: 5px 0;
+  background: #292929;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.folders li:hover,
+.chats li:hover {
+  background: #3d3d3d;
+}
+
+.new-chat {
+  margin-top: 20px;
+  padding: 10px;
+  background: #4caf50;
+  border: none;
+  color: white;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+/* Sidebar Hidden State */
+.sidebar.hidden {
+  transform: translateX(-100%);
+  position: absolute;
+}
+
+/* Menu Button */
+#menu-btn {
+  display: none;
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  background: #4caf50;
+  color: white;
+  border: none;
+  padding: 10px;
+  font-size: 20px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+/* Chat Area */
+.chat-area {
+  flex-grow: 1;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  position: absolute;
+  top: 10px;
+  padding: 0 20px;
+}
+
+.badge {
+  background: green;
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
+/* Dark Mode Toggle - Aligned Right */
+#theme-toggle {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  margin-left: auto;
+}
+
+/* Welcome Box */
+.welcome-box {
+  background: #222;
+  padding: 30px;
+  border-radius: 10px;
+  text-align: center;
+  max-width: 500px;
+}
+
+.options {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.options button {
+  background: #333;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.input-box {
+  display: flex;
+  border: 1px solid #555;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.input-box input {
+  flex-grow: 1;
+  padding: 10px;
+  border: none;
+  background: #444;
+  color: white;
+}
+
+.input-box button {
+  background: green;
+  padding: 10px;
+  border: none;
+  cursor: pointer;
+}
+
+/* Dark Mode */
+.dark-mode {
+  background: #f5f5f5;
+  color: black;
+}
+
+.dark-mode .sidebar {
+  background: #d3d3d3;
+  color: black;
+}
+
+.dark-mode .search-box {
+  background: white;
+  color: black;
+}
+
+.dark-mode .folders li,
+.dark-mode .chats li {
+  background: white;
+  color: black;
+}
+
+.dark-mode .new-chat {
+  background: darkgreen;
+}
+
+.dark-mode .chat-area {
+  background: white;
+}
+
+.dark-mode .welcome-box {
+  background: #e6e6e6;
+  color: black;
+}
+
+.dark-mode .options button {
+  background: #ddd;
+  color: black;
+}
+
+.dark-mode .input-box {
+  border-color: black;
+}
+
+.dark-mode .input-box input {
+  background: white;
+  color: black;
+}
+
+/* Header Styling */
+header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end; /* Aligns items to the extreme right */
+  width: 100%;
+  position: absolute;
+  top: 10px;
+  padding: 0 20px;
+}
+
+/* Chat Name */
+header h2 {
+  margin: 0;
+}
+
+/* Dark Mode Toggle - Placed below the Chat Name */
+#theme-toggle {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  margin-top: 10px; /* Adds spacing below the title */
+}
