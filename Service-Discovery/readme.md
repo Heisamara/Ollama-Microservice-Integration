@@ -16,6 +16,13 @@ In a microservices architecture, services need to communicate but **do not alway
 - Instead of hardcoding the service's address, they **query the Service Registrar**.
 - The **Service Registrar finds and forwards the request** to the correct service.
 - The user **gets the response without needing to know where Ollama is running**.
+  
+### **🎯 Features**
+✅ **Service Registration** – Microservices register with the Service Registrar on startup.  
+✅ **Heartbeat Monitoring** – Services send a heartbeat every 2 minutes to stay active.  
+✅ **Service Discovery** – Any service can fetch the list of available services.  
+✅ **Message Forwarding** – Services can send messages to each other via the Service Registrar.  
+✅ **Ollama AI Integration** – The `ollama_service` can generate AI-based responses when queried.
 
 This setup ensures **dynamic service discovery** and enables **flexible communication** between services.
 
@@ -33,13 +40,6 @@ This project contains two microservices:
 - Handles AI-based responses using Ollama.
 - Receives messages forwarded by the Service Registrar.
 
-### **📂 Directory Structure**
-```
-📁 project-folder
-│-- 📄 service_registrar.py  # Service Discovery System
-│-- 📄 app.py                # Ollama AI Microservice
-│-- 📄 README.md             # Documentation
-│-- 📄 requirements.txt      # Python dependencies
 ```
 
 ---
