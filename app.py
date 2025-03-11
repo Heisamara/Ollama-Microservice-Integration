@@ -1,6 +1,6 @@
-from flask import Flask, request, jsonify, Response
 import requests
 import json
+from flask import Flask, request, jsonify, Response
 
 app = Flask(__name__)
 
@@ -29,7 +29,7 @@ def generate_text():
         if ollama_response.status_code != 200:
             return jsonify({"error": f"Ollama returned {ollama_response.status_code}"}), 500
 
-        # Stream the response to the client
+        # Stream the response to the client and return response
         def stream_response():
             for line in ollama_response.iter_lines(decode_unicode=True):
                 if line:
