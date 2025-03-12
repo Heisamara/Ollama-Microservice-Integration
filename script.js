@@ -11,16 +11,13 @@ document.addEventListener("DOMContentLoaded", function () {
       const userMessage = document.createElement("p");
       userMessage.textContent = `You: ${userInput}`;
       chatArea.appendChild(userMessage);
-      
-      inputBox.value = ""; // Clear input box
+      inputBox.value = "";
 
       try {
           const response = await fetch("http://localhost:5000/generate", {
               method: "POST",
-              headers: {
-                  "Content-Type": "application/json",
-              },
-              body: JSON.stringify({ text: userInput }),
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ text: userInput })
           });
 
           if (!response.ok) {
@@ -41,27 +38,30 @@ document.addEventListener("DOMContentLoaded", function () {
           }
       } catch (error) {
           console.error("Error:", error);
+          const errorMessage = document.createElement("p");
+          errorMessage.textContent = "Error: Could not get response from AI.";
+          chatArea.appendChild(errorMessage);
       }
+  });
+
+  // Sidebar Toggle
+  const sidebar = document.querySelector(".sidebar");
+  const closeSidebarBtn = document.getElementById("close-sidebar");
+  const menuBtn = document.getElementById("menu-btn");
+
+  closeSidebarBtn.addEventListener("click", () => {
+    sidebar.classList.add("hidden");
+    menuBtn.style.display = "block";
+  });
+
+  menuBtn.addEventListener("click", () => {
+    sidebar.classList.remove("hidden");
+    menuBtn.style.display = "none";
+  });
+
+  // Dark Mode Toggle
+  document.getElementById("theme-toggle").addEventListener("click", () => {
+    document.body.classList.toggle("dark-mode");
   });
 });
 
-
-// Sidebar Toggle
-const sidebar = document.querySelector(".sidebar");
-const closeSidebarBtn = document.getElementById("close-sidebar");
-const menuBtn = document.getElementById("menu-btn");
-
-closeSidebarBtn.addEventListener("click", () => {
-  sidebar.classList.add("hidden");
-  menuBtn.style.display = "block";
-});
-
-menuBtn.addEventListener("click", () => {
-  sidebar.classList.remove("hidden");
-  menuBtn.style.display = "none";
-});
-
-// Dark Mode Toggle
-document.getElementById("theme-toggle").addEventListener("click", () => {
-  document.body.classList.toggle("dark-mode");
-});
