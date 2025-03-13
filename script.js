@@ -4,47 +4,40 @@ document.addEventListener("DOMContentLoaded", function () {
   const chatArea = document.querySelector(".chat-area");
 
   sendButton.addEventListener("click", async () => {
-      const userInput = inputBox.value.trim();
-      if (!userInput) return;
+    const userInput = inputBox.value.trim();
+    if (!userInput) return;
 
-      // Display user message
-      const userMessage = document.createElement("p");
-      userMessage.textContent = `You: ${userInput}`;
-      chatArea.appendChild(userMessage);
-      
-      inputBox.value = ""; // Clear input box
+    // Display user message
+    const userMessage = document.createElement("p");
+    userMessage.textContent = `You: ${userInput}`;
+    chatArea.appendChild(userMessage);
 
-      try {
-          const response = await fetch("http://localhost:5000/generate", {
-              method: "POST",
-              headers: {
-                  "Content-Type": "application/json",
-              },
-              body: JSON.stringify({ text: userInput }),
-          });
+    inputBox.value = ""; // Clear input box
 
-          if (!response.ok) {
-              throw new Error("Failed to fetch response from server");
-          }
+    try {
+      const response = await fetch("http://localhost:5001/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ message: userInput }),
+      });
 
-          // Handle streaming response
-          const reader = response.body.getReader();
-          const decoder = new TextDecoder();
-          let botMessage = document.createElement("p");
-          botMessage.textContent = "Bot: ";
-          chatArea.appendChild(botMessage);
-
-          while (true) {
-              const { done, value } = await reader.read();
-              if (done) break;
-              botMessage.textContent += decoder.decode(value, { stream: true });
-          }
-      } catch (error) {
-          console.error("Error:", error);
+      if (!response.ok) {
+        throw new Error("Failed to fetch response from server");
       }
+
+      const responseData = await response.json();
+
+      // Display bot response
+      const botMessage = document.createElement("p");
+      botMessage.textContent = `Bot: ${responseData.response}`;
+      chatArea.appendChild(botMessage);
+    } catch (error) {
+      console.error("Error:", error);
+    }
   });
 });
-
 
 // Sidebar Toggle
 const sidebar = document.querySelector(".sidebar");

@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 import time
 import threading
+from flask_cors import CORS 
 
 app = Flask(__name__)
 
@@ -91,3 +92,26 @@ def forward_message():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5001, debug=True)
+    
+
+ # Enables frontend-backend communication
+
+app = Flask(__name__)
+CORS(app)  # Allows frontend (JS) to make requests to the backend (Flask)
+
+@app.route('/chat', methods=['POST'])
+def chat():
+    data = request.json
+    user_message = data.get("message", "")
+
+    if not user_message:
+        return jsonify({"error": "No message provided"}), 400
+
+    # Generate a basic response (Replace this with AI logic later)
+    bot_response = f"Hello! You said: {user_message}"
+
+    return jsonify({"response": bot_response})  # Send response to frontend
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5001, debug=True)
+
