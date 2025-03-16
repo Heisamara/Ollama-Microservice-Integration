@@ -3,6 +3,7 @@ import requests
 import json
 import time
 import threading
+import socket
 
 app = Flask(__name__)
 
@@ -11,8 +12,21 @@ OLLAMA_URL = "http://localhost:11434/api/chat"
 
 # Service Discovery Settings
 SERVICE_NAME = "ollama_service"
-SERVICE_ADDRESS = "http://127.0.0.1:5000"  # This microservice runs on port 5000
-REGISTRAR_URL = "http://127.0.0.1:5001"  # Service Registrar runs on port 5001
+REGISTRAR_URL = "http://192.168.1.100:5001"  # Change this to the actual machine running `service_registrar.py`
+
+# Automatically determine the machine's IP address
+def get_local_ip():
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("8.8.8.8", 80))  # Connect to an external server to get the IP
+        local_ip = s.getsockname()[0]
+        s.close()
+        return local_ip
+    except Exception as e:
+        print(f"Failed to get local IP: {e}")
+        return "127.0.0.1"  # Fallback
+
+SERVICE_ADDRESS = f"http://{get_local_ip()}:5000"  # Dynamically set this machine's address
 
 # Function to register with the Service Registrar
 def register_service():
@@ -45,19 +59,16 @@ def generate_text():
         if not user_input:
             return jsonify({"error": "No text provided"}), 400
 
-        # Define the payload for Ollama
         payload = {
             "model": "llama3.2",
             "messages": [{"role": "user", "content": user_input}]
         }
 
-        # Send the request to Ollama with streaming enabled
         ollama_response = requests.post(OLLAMA_URL, json=payload, stream=True)
 
         if ollama_response.status_code != 200:
             return jsonify({"error": f"Ollama returned {ollama_response.status_code}"}), 500
 
-        # Stream the response to the client
         def stream_response():
             for line in ollama_response.iter_lines(decode_unicode=True):
                 if line:
@@ -73,7 +84,7 @@ def generate_text():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# New endpoint: Receive messages from other services
+# Receive messages from other services
 @app.route('/receive', methods=['POST'])
 def receive_message():
     data = request.json
@@ -82,7 +93,6 @@ def receive_message():
 
     print(f"Received message from {sender}: {message}")
 
-    # Send message to Ollama
     payload = {
         "model": "llama3.2",
         "messages": [{"role": "user", "content": message}]
@@ -91,16 +101,14 @@ def receive_message():
     try:
         ollama_response = requests.post(OLLAMA_URL, json=payload, stream=True)
 
-        # Check if response is successful
         if ollama_response.status_code != 200:
             return jsonify({"error": f"Ollama returned {ollama_response.status_code}"}), 500
 
-        # Process Ollama's streaming response to extract only the answer
         response_message = ""
         for line in ollama_response.iter_lines(decode_unicode=True):
             if line:
                 try:
-                    json_data = json.loads(line)  # Parse each JSON line
+                    json_data = json.loads(line)
                     if "message" in json_data and "content" in json_data["message"]:
                         response_message += json_data["message"]["content"] + " "
                 except json.JSONDecodeError:
@@ -112,6 +120,6 @@ def receive_message():
         return jsonify({"error": f"Failed to connect to Ollama: {str(e)}"}), 500
 
 if __name__ == '__main__':
-    print("Starting Flask server with Ollama streaming...")
+    print(f"Starting Flask server on {SERVICE_ADDRESS}...")
     register_service()  # Register this service with the Service Registrar on startup
     app.run(host='0.0.0.0', port=5000, debug=True)
