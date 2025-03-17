@@ -86,6 +86,42 @@ def generate_text():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@app.route('/receive', methods=['POST'])
+def receive_message():
+    data = request.json
+    sender = data.get("from")
+    message = data.get("message")
+
+    print(f"Received message from {sender}: {message}")
+
+    payload = {
+        "model": "llama3.2",
+        "messages": [{"role": "user", "content": message}]
+    }
+
+    try:
+        ollama_response = requests.post(OLLAMA_URL, json=payload, stream=True)
+
+        if ollama_response.status_code != 200:
+            return jsonify({"error": f"Ollama returned {ollama_response.status_code}"}), 500
+
+        response_message = ""
+        for line in ollama_response.iter_lines(decode_unicode=True):
+            if line:
+                try:
+                    json_data = json.loads(line)
+                    if "message" in json_data and "content" in json_data["message"]:
+                        response_message += json_data["message"]["content"] + " "
+                except json.JSONDecodeError:
+                    continue  # Skip invalid JSON lines
+
+        return jsonify({"message": response_message.strip()}), 200
+
+    except requests.exceptions.RequestException as e:
+        return jsonify({"error": f"Failed to connect to Ollama: {str(e)}"}), 500
+
+
+
 if __name__ == '__main__':
     print(f"Starting Flask server on {SERVICE_ADDRESS}...")
     register_service()  # Register with the service registrar
