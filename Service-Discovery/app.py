@@ -12,7 +12,7 @@ OLLAMA_URL = "http://localhost:11434/api/chat"
 
 # Service Discovery Settings
 SERVICE_NAME = "ollama_service"
-REGISTRAR_URL = "http://192.168.1.100:5001"  # Change this to the actual machine running `service_registrar.py`
+REGISTRAR_URL = "http://10.0.0.109:5001"  # Change this to the actual machine running `service_registrar.py`
 
 # Automatically determine the machine's IP address
 def get_local_ip():
