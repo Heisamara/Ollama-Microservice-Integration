@@ -103,6 +103,7 @@ def receive_message():
         ollama_response = requests.post(OLLAMA_URL, json=payload, stream=True)
 
         if ollama_response.status_code != 200:
+            print(f"Ollama API Error: {ollama_response.status_code}")
             return jsonify({"error": f"Ollama returned {ollama_response.status_code}"}), 500
 
         response_message = ""
@@ -112,13 +113,16 @@ def receive_message():
                     json_data = json.loads(line)
                     if "message" in json_data and "content" in json_data["message"]:
                         response_message += json_data["message"]["content"] + " "
-                except json.JSONDecodeError:
+                except json.JSONDecodeError as e:
+                    print(f"JSON Parsing Error: {e}")
                     continue  # Skip invalid JSON lines
 
         return jsonify({"message": response_message.strip()}), 200
 
     except requests.exceptions.RequestException as e:
+        print(f"Failed to connect to Ollama API: {str(e)}")
         return jsonify({"error": f"Failed to connect to Ollama: {str(e)}"}), 500
+
 
 
 
