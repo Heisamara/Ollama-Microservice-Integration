@@ -1,3 +1,4 @@
+
 # **Microservices-Based Service Discovery and Communication System**
 
 ## **📌 Overview**
@@ -27,6 +28,7 @@ In a microservices architecture, services need to communicate but **do not alway
 This setup ensures **dynamic service discovery** and enables **flexible communication** between services.
 
 ---
+
 ## **📌 1. Project Structure**
 This project contains two microservices:
 
@@ -35,14 +37,13 @@ This project contains two microservices:
 - Manages the registration and discovery of services.
 - Handles message forwarding between services.
 
-### **🔹 Ollama Microservice (`app.py`)**
+### **🔹 Ollama Microservice (`service_discovery.py`)**
 - Runs on **port 5000**.
 - Handles AI-based responses using Ollama.
 - Receives messages forwarded by the Service Registrar.
 
-```
-
 ---
+
 ## **📌 2. Installation & Setup**
 ### **🔹 Step 1: Install Dependencies**
 Ensure Python (>=3.8) is installed. Install required dependencies:
@@ -63,16 +64,20 @@ Running on http://0.0.0.0:5001
 ### **🔹 Step 3: Start the Ollama Microservice**
 In **another terminal**, start the AI microservice:
 ```sh
-python app.py
+python service_discovery.py
 ```
 Expected Output:
 ```
 Starting Flask server with Ollama streaming...
-{"message": "Service ollama_service registered at http://127.0.0.1:5000"}
+{"message": "Service ollama_service registered at http://<your-local-ip>:5000"}
 ```
 
+> ℹ️ Note: The local IP is dynamically determined, replacing `<your-local-ip>`.
+
 ---
+
 ## **📌 3. How It Works**
+
 ### **1️⃣ Service Registration**
 When a microservice starts, it **registers itself** with the Service Registrar.
 
@@ -80,6 +85,7 @@ When a microservice starts, it **registers itself** with the Service Registrar.
 ```sh
 curl -X GET http://127.0.0.1:5001/services
 ```
+
 ✅ Expected Output:
 ```json
 {
@@ -90,15 +96,15 @@ curl -X GET http://127.0.0.1:5001/services
 ```
 
 ---
+
 ### **2️⃣ Heartbeat System**
 Each microservice sends a **heartbeat every 2 minutes** to indicate it is still active. If a service **fails to send a heartbeat for 5 minutes**, it is automatically removed from the registry.
 
 📌 **Manually send a heartbeat (for testing):**
 ```sh
-curl -X POST http://127.0.0.1:5001/heartbeat \
-     -H "Content-Type: application/json" \
-     -d '{"service_name": "ollama_service"}'
+curl -X POST http://127.0.0.1:5001/heartbeat      -H "Content-Type: application/json"      -d '{"service_name": "ollama_service"}'
 ```
+
 ✅ Expected Output:
 ```json
 {
@@ -107,6 +113,7 @@ curl -X POST http://127.0.0.1:5001/heartbeat \
 ```
 
 ---
+
 ### **3️⃣ Service Discovery**
 Microservices can query the **Service Registrar** to get the list of available services.
 
@@ -114,6 +121,7 @@ Microservices can query the **Service Registrar** to get the list of available s
 ```sh
 curl -X GET http://127.0.0.1:5001/services
 ```
+
 ✅ Expected Output:
 ```json
 {
@@ -124,15 +132,15 @@ curl -X GET http://127.0.0.1:5001/services
 ```
 
 ---
+
 ### **4️⃣ Service-to-Service Communication**
 Microservices can **send messages to each other** through the Service Registrar.
 
 📌 **Send a message from one service to another:**
 ```sh
-curl -X POST http://127.0.0.1:5001/forward \
-     -H "Content-Type: application/json" \
-     -d '{"from": "test_service", "to": "ollama_service", "message": "What is AI?"}'
+curl -X POST http://127.0.0.1:5001/forward      -H "Content-Type: application/json"      -d '{"from": "test_service", "to": "ollama_service", "message": "What is AI?"}'
 ```
+
 ✅ Expected Response (Ollama's Answer):
 ```json
 {
@@ -141,15 +149,15 @@ curl -X POST http://127.0.0.1:5001/forward \
 ```
 
 ---
+
 ### **5️⃣ AI Response Handling**
 The `ollama_service` sends messages to **Ollama AI** and returns the response.
 
 📌 **Send a question directly to Ollama:**
 ```sh
-curl -X POST http://127.0.0.1:5000/receive \
-     -H "Content-Type: application/json" \
-     -d '{"from": "service_registrar", "message": "Capital of India?"}'
+curl -X POST http://127.0.0.1:5000/receive      -H "Content-Type: application/json"      -d '{"from": "service_registrar", "message": "Capital of India?"}'
 ```
+
 ✅ Expected Output:
 ```json
 {
@@ -158,11 +166,11 @@ curl -X POST http://127.0.0.1:5000/receive \
 ```
 
 ---
+
 ## **📌 4. Troubleshooting**
+
 | **Issue** | **Solution** |
 |-----------|-------------|
-| `Failed to reach ollama_service at http://127.0.0.1:5000` | Ensure `app.py` is running and registered correctly. Use `GET /services` to verify. |
-| `JSONDecodeError` when parsing Ollama response | Ensure `app.py` correctly extracts only the assistant’s response. |
+| `Failed to reach ollama_service at http://127.0.0.1:5000` | Ensure `service_discovery.py` is running and registered correctly. Use `GET /services` to verify. |
+| `JSONDecodeError` when parsing Ollama response | Ensure `service_discovery.py` correctly extracts only the assistant’s response. |
 | `Service disappears from registry` | Make sure the service is sending heartbeats. |
-
-
